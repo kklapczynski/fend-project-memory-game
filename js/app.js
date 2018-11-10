@@ -82,6 +82,7 @@ const turnCard = (event) => {
     const cards = document.querySelectorAll('li.card.open.show');
     console.log(cards);
     if (cards.length === 2) {
+        console.log("2 cards open");
         // check if cards are matching
         const cardPicture0 = cards[0].firstElementChild.className;
         console.log('cardPicture0: ' +cardPicture0);
@@ -94,17 +95,30 @@ const turnCard = (event) => {
             // lock matching cards = replace "open show" with "match" class
             lockCards(cards[0], cards[1]);
         } else {
-            // wait 2s
-             
-            // turn back cards
-            flipBack(cards[0], cards[1]);
+            console.log("cards not matching");
+            // TODO: block clicking new cards while two are open
+            // remove clicklistener?
+            blockCardsClick();
+            // wait 2s and turn back cards
+            window.setTimeout(flipBack, 2000, cards[0], cards[1]);
         }
     }
 }
 
-flipBack = (card0, card1) => {
+const blockCardsClick = () => {
+    DOMElements.deck.removeEventListener('click', turnCard);
+    return;
+}
+
+const allowCardsClick = () => {
+    DOMElements.deck.addEventListener('click', turnCard);
+    return;
+}
+
+const flipBack = (card0, card1) => {
     card0.classList.remove("open", "show") ;
     card1.classList.remove("open", "show") ;
+    allowCardsClick();
     return;
 } 
 
@@ -126,11 +140,11 @@ const showCard = (cardElememt) => {
 
 const setupEventListeners = () => {
     DOMElements.restart.addEventListener('click', newGame);
-    DOMElements.deck.addEventListener('click', turnCard);
+    allowCardsClick();
 }
 
 const init = () => {
-    //newGame();
+    newGame();
     setupEventListeners();
 }
 
