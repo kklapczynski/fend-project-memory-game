@@ -8,10 +8,15 @@ const cardsArray = [
 ]
 
 const DOMElements = {
-    restart: document.querySelector('.restart'),
-    deck: document.querySelector('.deck')
+    restart: document.querySelectorAll('.restart'),
+    deck: document.querySelector('.deck'),
+    moves: document.querySelector('.moves'),
+    scorePanel: document.querySelector('.score-panel'),
+    winBoard: document.querySelector('.win-board'),
+    winMessage: document.querySelector('.win-board h2')
 };
 
+let movesNumber, gameFinished;
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -48,10 +53,10 @@ function shuffle(array) {
 const newGame = () => {
     console.log("new game");
     const currentCardsArray = shuffle(cardsArray);
-    console.log(currentCardsArray);
+    // console.log(currentCardsArray);
 
     // remove all from ul with class='deck'
-    const deck = document.querySelector('.deck');
+    const deck = DOMElements.deck;
     
     while(deck.firstChild) {
         deck.firstChild.remove();
@@ -65,44 +70,96 @@ const newGame = () => {
             </li>`
         )   
     }
-    
+
+    // zero moves counter
+    movesNumber = 0;
+    DOMElements.moves.textContent = movesNumber;
+    // TODO:
+    // 1. timer with setTimeout() to measure time of game
+    // 2. star rating: allstars when starting - reduce when number of moves increase
+    if (gameFinished) {
+        toggleElements(DOMElements.deck);
+        toggleElements(DOMElements.scorePanel);
+        toggleElements(DOMElements.winBoard);
+        gameFinished = false;
+    }
 }
 
 const turnCard = (event) => {
     const target = event.target;
     // react only if unturned card (li with only one class= 'card') is clicked
     if (target.tagName !== 'LI' || target.className !== 'card') {
-        // console.log(`li was not clicked or li has no or more than 'card' class`);
         return;
     }
     // add classes open and show to turn the card
-    showCard(target);
+    toggleCard(target);
 
     // check if another card is turned
     const cards = document.querySelectorAll('li.card.open.show');
-    console.log(cards);
+
     if (cards.length === 2) {
-        console.log("2 cards open");
+        addMove();
         // check if cards are matching
         const cardPicture0 = cards[0].firstElementChild.className;
-        console.log('cardPicture0: ' +cardPicture0);
-        console.log(cardPicture0);
         const cardPicture1 = cards[1].firstElementChild.className;
-        console.log('cardPicture1: ' +cardPicture1);
-        console.log(cardPicture1);
         if ( cardPicture0 === cardPicture1) {
-            console.log("BINGO");
             // lock matching cards = replace "open show" with "match" class
             lockCards(cards[0], cards[1]);
+            // check if all cards are matched
+            if (checkGameEnd())
+                endGame();
+            else
+                console.log("nothing - game not finished = continue game");
         } else {
-            console.log("cards not matching");
-            // TODO: block clicking new cards while two are open
-            // remove clicklistener?
             blockCardsClick();
-            // wait 2s and turn back cards
-            window.setTimeout(flipBack, 2000, cards[0], cards[1]);
+            // wait 1s and turn back cards
+            window.setTimeout(flipBack, 1000, cards[0], cards[1]);
         }
     }
+}
+
+const winMessage = (moves) => {
+    const text = `You won with ${moves} moves !!!`;
+    DOMElements.winMessage.textContent = text;
+    return;
+}
+
+const toggleElements = (elements) => {
+    // if NodeList
+    if (elements.length) {
+        for ( const el of elements) {
+            el.classList.toggle('hidden');
+        }
+    // if element
+    } else {
+        elements.classList.toggle('hidden');
+    }
+    
+    return;
+}
+
+const endGame = () => {
+    winMessage(movesNumber);
+    toggleElements(DOMElements.deck);
+    toggleElements(DOMElements.scorePanel);
+    toggleElements(DOMElements.winBoard);
+    gameFinished = true;
+}
+
+const checkGameEnd = () => {
+    // check if any unmatched cards left
+    const cards = DOMElements.deck.querySelectorAll('.card');
+    for (let card of cards) {
+        if (card.classList.length === 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const addMove = () => {
+    movesNumber++;
+    DOMElements.moves.textContent = movesNumber;
 }
 
 const blockCardsClick = () => {
@@ -116,30 +173,35 @@ const allowCardsClick = () => {
 }
 
 const flipBack = (card0, card1) => {
-    card0.classList.remove("open", "show") ;
-    card1.classList.remove("open", "show") ;
+    toggleCard(card0);
+    toggleCard(card1);
     allowCardsClick();
     return;
 } 
 
 const lockCards = (card0, card1) => {
-    const card0ClassList = card0.classList;
-    card0ClassList.replace("open", "match");
-    card0ClassList.remove("show");
-
-    const card1ClassList = card1.classList;
-    card1ClassList.replace("open", "match");
-    card1ClassList.remove("show");
+    toggleCard(card0, true);
+    toggleCard(card1, true);
     return;
 }
 
-const showCard = (cardElememt) => {
-    cardElememt.classList.add("open", "show");
+const toggleCard = (cardElememt, match) => {
+    const cl = cardElememt.classList;
+    cl.toggle("open");
+    cl.toggle("show");
+    
+    if(match) {
+        cl.toggle("match");
+    }
+
     return;
 }
 
 const setupEventListeners = () => {
-    DOMElements.restart.addEventListener('click', newGame);
+    for (const r of DOMElements.restart) {
+        r.addEventListener('click', newGame);
+    }
+    
     allowCardsClick();
 }
 
