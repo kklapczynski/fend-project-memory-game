@@ -98,11 +98,17 @@ h1 {
     margin: 0 5px 0 0;
 }
 
+.star-on {
+    color: #f7f30b;
+}
+
 .score-panel .stars li {
     list-style: none;
     display: inline-block;
 }
-
+.score-panel .time {
+    margin: 0 15px;
+}
 .score-panel .restart {
     float: right;
     cursor: pointer;
