@@ -2,19 +2,21 @@
 
 ## Table of Contents
 
-* [Instructions](#instructions)
-* [Contributing](#contributing)
+* [Description](#Description)
+* [How to play](#HowToPlay)
 
-## Instructions
+## Description
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+Project built from the starter project: some HTML and CSS styling to display a static version of the Memory Game project.
+HTML, CSS were modified and app.js was practically all (beside provided shuffle function) coded for this assignment.
 
-To get started, open `js/app.js` and start building out the app's functionality
+Goal of the game is to match all pairs of cards, which are shuffeled each time game is restarted.
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+## HowToPlay
 
-## Contributing
+Open index.html file in your browser. Turn two cards in each move by clicking it. Remember cards position to match all pairs, meaning turning the same cards in one move.
 
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
+Moves are counted and time is measured for matching all pairs displayed after end of the game.
+Rating starts with 5 stars and gets reduced by a star at 13, 16, 19 and 22 moves.
 
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+You can restart the game during one with button above the cards and after finishing the game when moves and time you took to finish is diplayed along with your rating.

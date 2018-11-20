@@ -62,6 +62,8 @@
     *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
     */
     const newGame = () => {
+        stopTimer();
+
         timerIsOn = false;
         const currentCardsArray = shuffle(cardsArray);
 
@@ -194,9 +196,12 @@
         return;
     };
 
-    const endGame = () => {
-        // stop timer
+    const stopTimer = () => {
         clearInterval(timerIntervalID);
+    }
+
+    const endGame = () => {
+        stopTimer();
         winMessage(movesNumber, timePassed);
         toggleElements(DOMElements.deck);
         toggleElements(DOMElements.scorePanel);
